@@ -24,8 +24,8 @@ The raw data was loaded into the visual studio code following the following step
   - On PowerBI
     - I employed the line graph to show the trend of fertility and Life Exoectancy over the years
     - I used the score card to show the average of both life expectancy and fertility over the period.
-    - I also produced visuals comparing North Anerica average fertility rate and life expectancy to canada's.
+    - I also produced visuals comparing North America average fertility rate and life expectancy to Canada's.
 
 # Outcome
-While fertility rate has dropped over the years, life expectancy as increased. Canadas fertility dropped form 3.81 in 1960 to 1.61 in 2013. Canadas fertility averaged 1.96 over the period compared to North Americas 2.02. Life Expectancy in Canada rose from 71.13 in 1960 to 81.40 in 2013. Averaging 76.32 over the period compared to North Americas 75.64. This is one of the explanation for the population having more aged people than young people and the high rate of immigration requirements in the country. We the availability of other data sources such as medical, education, economy, we may test for trends between them and our two variables in this study. Advance statistical tools could be used to check for correlation and make predcitions nad reccomendations. 
+While fertility rate has dropped over the years, life expectancy as increased. Canadas fertility dropped form 3.81 in 1960 to 1.61 in 2013. Canadas fertility averaged 1.96 over the period compared to North Americas 2.02. Life Expectancy in Canada rose from 71.13 in 1960 to 81.40 in 2013. Averaging 76.32 over the period compared to North Americas 75.64. This is one of the explanation for the population having more aged people than young people and the high rate of immigration requirements in the country. We can use search for and use other data such as medical data, education data and economy data. We may test for trends between them and our two variables in this study. Advance statistical tools could be used to check for correlation and make predcitions nad reccomendations. 
 
