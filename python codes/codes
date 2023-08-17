@@ -1,0 +1,139 @@
+``` py
+from itertools import islice
+import pandas as pd
+import numpy as np
+
+# Install openpyxl using pip install openpyxl in the terminal after which we can import load_workbook
+from openpyxl import load_workbook
+
+# setting maximum column to 500
+pd.set_option('display.max_columns', 500)
+
+# Creating function to load each excel sheet into a dataframe
+
+
+def get_dataframe(_source, _sheet_name):
+    _wb = load_workbook(filename=_source)
+    _ws = _wb[_sheet_name]
+    dataframe = pd.DataFrame(_ws.values)
+    return dataframe
+
+
+# Applying the function to create each dataframe for each table
+df_metadata = get_dataframe('Country_Metadata.xlsx', 'Metadata - Countries')
+df_fertility = get_dataframe('Fertility_Rate.xlsx', 'Data')
+df_expectancy = get_dataframe('Life_Expectancy_At_Birth.xlsx', 'Data')
+
+# print(df_metadata.head())
+# print(df_fertility.head())
+# print(df_expectancy.head())
+
+# After printing each dataframe, it is discovered that there is no header
+# Creating header
+
+# Creating work sheet for each data
+wb_metadata = load_workbook(filename='Country_Metadata.xlsx')
+ws_metadata = wb_metadata['Metadata - Countries']
+
+wb_fertility = load_workbook(filename='Fertility_Rate.xlsx')
+ws_fertility = wb_fertility['Data']
+
+wb_expectancy = load_workbook(filename='Life_Expectancy_At_Birth.xlsx')
+ws_expectancy = wb_expectancy['Data']
+
+
+# import islice from itertools
+
+# Creating function for creating header for our frame
+
+def get_header_df(_ws):
+    data = _ws.values
+    cols = next(_ws.values)[1:]
+    data = list(data)
+    idx = [r[0] for r in data]
+    data = (islice(r, 1, None) for r in data)
+    df_header = pd.DataFrame(data, index=idx, columns=cols)
+    return df_header
+
+
+# Appying function to get header for the 3 dataframe, a print can be performed afterwards to confirm
+df_metadata = get_header_df(ws_metadata)
+df_fertility = get_header_df(ws_fertility)
+df_expectancy = get_header_df(ws_expectancy)
+
+# Applying reset index to dataframe to create an index column and remove a duplicated header row
+df_metadata = df_metadata.reset_index()
+df_metadata = df_metadata.iloc[1:, :]
+
+df_fertility = df_fertility.reset_index()
+df_fertility = df_fertility.iloc[1:, :]
+
+df_expectancy = df_expectancy.reset_index()
+df_expectancy = df_expectancy.iloc[1:, :]
+
+
+# Changing my column name from index to countryName for the three dataframes
+def column_name_change(_old, _new, _df):
+    _df.columns = _df.columns.str.replace(_old, _new)
+    return _df.columns
+
+
+df_metadata.columns = column_name_change('index', 'CountryName', df_metadata)
+df_expectancy.columns = column_name_change(
+    'index', 'CountryName', df_expectancy)
+df_fertility.columns = column_name_change('index', 'CountryName', df_fertility)
+
+# print (df_expectancy.head())
+
+# Melting selected columns in fertility and expectancy
+# Defining the columns that wouldnnot be melted as df_expectancy_cols before melting with pd.melt
+
+df_expectancy_cols = ["CountryName", "Country Code",
+                      "Indicator Name", "Indicator Code"]
+df_expectancy = pd.melt(df_expectancy, id_vars=df_expectancy_cols,
+                        var_name="Year", value_name="expectancy")
+
+df_fertility_cols = ["CountryName", "Country Code",
+                     "Indicator Name", "Indicator Code"]
+df_fertility = pd.melt(df_fertility, id_vars=df_fertility_cols,
+                       var_name="Year", value_name="fertility")
+
+# Converting the newly created Year column values into integers
+df_expectancy['Year'] = df_expectancy['Year'].astype(int)
+df_fertility['Year'] = df_fertility['Year'].astype(int)
+
+# Merging my first tables; df_metadata and df_fertility
+df_merged = pd.merge(left = df_fertility, right=df_metadata, how='left', on = ['Country Code', 'CountryName'])
+# print(df_merged)
+
+# Merging the third table
+df_merged = pd.merge(left = df_merged, right = df_expectancy, how='left', on = ['Country Code', 'CountryName', 'Year'])
+# print(df_merged)
+
+# Performing a group by region
+df_region = df_merged.groupby(['Region'])[['fertility','expectancy']].mean().reset_index()
+# print(df_region.head())
+
+# Using a where to ascertain Canada's fertility and expectancy over the years
+df_country = df_merged[df_merged['CountryName'] == 'Canada']
+# print(df_country.head())
+
+# Calculating the average fertility and expectancy for Canada
+df_canada = df_country.groupby(['CountryName'])[['fertility','expectancy']].mean().reset_index()
+# print(df_canada.head())
+
+# Creating a new column 
+df_country.loc[((df_country['Year']>= 1960) & (df_country['Year'] < 1970)), 'Decade'] = "1960's"
+df_country.loc[((df_country['Year']>= 1970) & (df_country['Year'] < 1980)), 'Decade'] = "1970's"
+df_country.loc[((df_country['Year']>= 1980) & (df_country['Year'] < 1990)), 'Decade'] = "1980's"
+df_country.loc[((df_country['Year']>= 1990) & (df_country['Year'] < 2000)), 'Decade'] = "1990's"
+df_country.loc[((df_country['Year']>= 2000) & (df_country['Year'] < 2010)), 'Decade'] = "2000's"
+df_country.loc[(df_country['Year'] >= 2010), 'Decade'] = "2010's"
+
+# print(df_country.head())
+df_region.to_excel('df_region.xlsx')
+df_canada.to_excel('df_canada.xlsx')
+#df_country.to_excel('df_country.xlsx')
+
+
+```
