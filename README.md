@@ -1,4 +1,4 @@
-# Portfolio_using_Python
+# Study of trends in Canada Fertility and Life Expectancy Over the Decades
 This project aims to understudy the trends of fertility and life expectancy rate in canada over the period 1960-2013. It will involve dissecting our dataset using python and employ Power BI to produce visulaization of our findings. The trend can be helpful in gaining several insights such as population insights, proxy for potential impact of economy or health deveopment on the population, explanation on the ageing population and high rate of immigration needs and many other insight. The visulaization helps us easily see at a glance the changes over the years.
 
 # Data
